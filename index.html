@@ -237,6 +237,17 @@
 
   .field-error-msg.show { display: block; }
 
+  .field.field-error-input input,
+  .field.field-error-input select,
+  .field.field-error-input textarea {
+    border-color: #f87171;
+    animation: shake 0.4s ease;
+  }
+
+  .field.field-error-input .field-error-msg {
+    margin-top: 8px;
+  }
+
   .chip { position: relative; }
   .chip input {
     position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; margin: 0;
@@ -935,15 +946,33 @@
   });
 
   // Clear error highlight on any radio group when user makes a selection
+  function clearFieldError(group) {
+    if (!group) return;
+    const chipGroup = group.querySelector('.chip-group');
+    const msg = group.querySelector('.field-error-msg');
+    if (chipGroup) chipGroup.classList.remove('field-error');
+    group.classList.remove('field-error-input');
+    if (msg) msg.classList.remove('show');
+  }
+
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', function() {
-      const group = this.closest('.field');
-      if (!group) return;
-      const chipGroup = group.querySelector('.chip-group');
-      const msg = group.querySelector('.field-error-msg');
-      if (chipGroup) chipGroup.classList.remove('field-error');
-      if (msg) msg.classList.remove('show');
+      clearFieldError(this.closest('.field'));
     });
+    radio.addEventListener('click', function() {
+      clearFieldError(this.closest('.field'));
+    });
+  });
+
+  // Clear error highlight on text/select/textarea inputs once they have a value
+  document.querySelectorAll('input[type="text"], input[type="tel"], select, textarea').forEach(el => {
+    const handler = function() {
+      if (this.value && this.value.trim() !== '') {
+        clearFieldError(this.closest('.field'));
+      }
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
   });
 
   // Show/hide Telegram username field based on contact method
@@ -1015,43 +1044,93 @@
   document.getElementById('intakeForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Explicit validation check
-    if (!this.checkValidity()) {
-      // Clear previous error highlights
-      document.querySelectorAll('.chip-group.field-error').forEach(el => el.classList.remove('field-error'));
-      document.querySelectorAll('.field-error-msg.show').forEach(el => el.classList.remove('show'));
+    // Clear previous error highlights
+    document.querySelectorAll('.chip-group.field-error').forEach(el => el.classList.remove('field-error'));
+    document.querySelectorAll('.field-error-msg.show').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('.field.field-error-input').forEach(el => el.classList.remove('field-error-input'));
 
-      const invalidEl = this.querySelector(':invalid');
+    const lang = document.querySelector('.lang-btn.active').dataset.setlang;
+    const radioTexts = {
+      ru: '⬆ Пожалуйста, выберите один из вариантов выше',
+      ua: '⬆ Будь ласка, оберіть один із варіантів вище',
+      en: '⬆ Please select one of the options above'
+    };
+    const inputTexts = {
+      ru: '⬆ Пожалуйста, заполните это поле',
+      ua: '⬆ Будь ласка, заповніть це поле',
+      en: '⬆ Please fill in this field'
+    };
 
-      if (invalidEl && invalidEl.type === 'radio') {
-        // Custom highlight for radio groups (native UI is invisible since
-        // the radio inputs themselves are hidden behind styled chips)
-        const group = invalidEl.closest('.field');
-        const chipGroup = group ? group.querySelector('.chip-group') : null;
-        if (chipGroup) {
-          chipGroup.classList.add('field-error');
+    // Walk all fields in document order, find the first invalid one
+    const fields = Array.from(this.querySelectorAll('.field'));
+    let firstInvalidGroup = null;
+    let firstInvalidType = null; // 'radio' or 'input'
+    let firstInvalidEl = null;
 
-          let msg = group.querySelector('.field-error-msg');
-          if (!msg) {
-            msg = document.createElement('div');
-            msg.className = 'field-error-msg';
-            chipGroup.insertAdjacentElement('afterend', msg);
+    for (const group of fields) {
+      // Skip hidden fields (e.g. Telegram username when not selected)
+      if (group.offsetParent === null) continue;
+
+      const chipGroup = group.querySelector('.chip-group');
+      if (chipGroup) {
+        const radios = chipGroup.querySelectorAll('input[type="radio"][required]');
+        if (radios.length > 0) {
+          const checked = Array.from(radios).some(r => r.checked);
+          if (!checked) {
+            firstInvalidGroup = group;
+            firstInvalidType = 'radio';
+            firstInvalidEl = radios[0];
+            break;
           }
-          const lang = document.querySelector('.lang-btn.active').dataset.setlang;
-          const texts = {
-            ru: '⬆ Пожалуйста, выберите один из вариантов выше',
-            ua: '⬆ Будь ласка, оберіть один із варіантів вище',
-            en: '⬆ Please select one of the options above'
-          };
-          msg.textContent = texts[lang] || texts.ru;
-          msg.classList.add('show');
-
-          group.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      } else {
-        // Standard input/select/textarea — native tooltip works fine
-        this.reportValidity();
+        continue;
       }
+
+      // Standard inputs / selects / textareas
+      const control = group.querySelector('input, select, textarea');
+      if (!control) continue;
+      if (!control.checkValidity()) {
+        firstInvalidGroup = group;
+        firstInvalidType = 'input';
+        firstInvalidEl = control;
+        break;
+      }
+    }
+
+    if (firstInvalidGroup) {
+      if (firstInvalidType === 'radio') {
+        const chipGroup = firstInvalidGroup.querySelector('.chip-group');
+        chipGroup.classList.add('field-error');
+
+        let msg = firstInvalidGroup.querySelector('.field-error-msg');
+        if (!msg) {
+          msg = document.createElement('div');
+          msg.className = 'field-error-msg';
+          chipGroup.insertAdjacentElement('afterend', msg);
+        }
+        msg.textContent = radioTexts[lang] || radioTexts.ru;
+        msg.classList.add('show');
+      } else {
+        firstInvalidGroup.classList.add('field-error-input');
+
+        let msg = firstInvalidGroup.querySelector('.field-error-msg');
+        if (!msg) {
+          msg = document.createElement('div');
+          msg.className = 'field-error-msg';
+          firstInvalidGroup.appendChild(msg);
+        }
+        msg.textContent = firstInvalidEl.title || inputTexts[lang] || inputTexts.ru;
+        msg.classList.add('show');
+      }
+
+      // Scroll into view, then focus after the scroll settles
+      firstInvalidGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        if (firstInvalidEl && typeof firstInvalidEl.focus === 'function') {
+          firstInvalidEl.focus({ preventScroll: true });
+        }
+      }, 400);
+
       return;
     }
 
