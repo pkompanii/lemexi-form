@@ -209,10 +209,14 @@
   .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
 
   .chip-group.field-error {
-    outline: 2px solid #f87171;
-    outline-offset: 6px;
+    outline: 3px solid #f87171;
+    outline-offset: 8px;
     border-radius: 100px;
     animation: shake 0.4s ease;
+  }
+
+  .chip-group.field-error .chip-label {
+    border-color: #f87171;
   }
 
   @keyframes shake {
@@ -1011,48 +1015,42 @@
   document.getElementById('intakeForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Explicit validation check — finds the first invalid field
-    // (including radio button groups inside chip-groups), scrolls to it,
-    // and highlights it so the user knows exactly what's missing.
+    // Explicit validation check
     if (!this.checkValidity()) {
       // Clear previous error highlights
       document.querySelectorAll('.chip-group.field-error').forEach(el => el.classList.remove('field-error'));
       document.querySelectorAll('.field-error-msg.show').forEach(el => el.classList.remove('show'));
 
-      // Find the first invalid form element
       const invalidEl = this.querySelector(':invalid');
 
-      if (invalidEl) {
-        if (invalidEl.type === 'radio') {
-          // Highlight the whole chip-group containing this radio group
-          const group = invalidEl.closest('.field');
-          const chipGroup = group ? group.querySelector('.chip-group') : null;
-          if (chipGroup) {
-            chipGroup.classList.add('field-error');
+      if (invalidEl && invalidEl.type === 'radio') {
+        // Custom highlight for radio groups (native UI is invisible since
+        // the radio inputs themselves are hidden behind styled chips)
+        const group = invalidEl.closest('.field');
+        const chipGroup = group ? group.querySelector('.chip-group') : null;
+        if (chipGroup) {
+          chipGroup.classList.add('field-error');
 
-            // Show or create an error message under the group
-            let msg = group.querySelector('.field-error-msg');
-            if (!msg) {
-              msg = document.createElement('div');
-              msg.className = 'field-error-msg';
-              const lang = document.querySelector('.lang-btn.active').dataset.setlang;
-              const texts = {
-                ru: 'Пожалуйста, выберите один из вариантов',
-                ua: 'Будь ласка, оберіть один із варіантів',
-                en: 'Please select one of the options'
-              };
-              msg.textContent = texts[lang] || texts.ru;
-              chipGroup.insertAdjacentElement('afterend', msg);
-            }
-            msg.classList.add('show');
-
-            group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          let msg = group.querySelector('.field-error-msg');
+          if (!msg) {
+            msg = document.createElement('div');
+            msg.className = 'field-error-msg';
+            chipGroup.insertAdjacentElement('afterend', msg);
           }
-        } else {
-          // Standard input/select/textarea — let the browser show its native tooltip
-          invalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          invalidEl.reportValidity();
+          const lang = document.querySelector('.lang-btn.active').dataset.setlang;
+          const texts = {
+            ru: '⬆ Пожалуйста, выберите один из вариантов выше',
+            ua: '⬆ Будь ласка, оберіть один із варіантів вище',
+            en: '⬆ Please select one of the options above'
+          };
+          msg.textContent = texts[lang] || texts.ru;
+          msg.classList.add('show');
+
+          group.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+      } else {
+        // Standard input/select/textarea — native tooltip works fine
+        this.reportValidity();
       }
       return;
     }
