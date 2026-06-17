@@ -290,6 +290,25 @@
     font-size: 14px;
   }
 
+  .phone-input-wrap {
+    position: relative;
+  }
+
+  .phone-code-prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: var(--text-soft);
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  .phone-input-wrap input {
+    padding-left: 56px;
+  }
+
   @media (max-width: 480px) {
     .row { grid-template-columns: 1fr; }
     .card { padding: 26px 18px; }
@@ -353,6 +372,29 @@
   [data-lang] { display: none; }
   [data-lang].active-lang { display: block; }
   span[data-lang].active-lang { display: inline; }
+
+  /* Branch visibility (rent vs buy) */
+  .branch-rent, .branch-buy { display: none; }
+  body.deal-rent .branch-rent { display: block; }
+  body.deal-buy .branch-buy { display: block; }
+
+  .branch-buy-inline-num, .branch-rent-inline-num { display: none; }
+  body.deal-buy .branch-buy-inline-num { display: block; }
+  body.deal-rent .branch-rent-inline-num { display: block; }
+  body:not(.deal-rent):not(.deal-buy) .branch-buy-inline-num { display: block; }
+  body.deal-rent .row.branch-rent { display: grid; }
+  body.deal-buy .row.branch-buy { display: grid; }
+  @media (max-width: 480px) {
+    body.deal-rent .row.branch-rent { display: block; }
+    body.deal-buy .row.branch-buy { display: block; }
+  }
+  body.deal-rent hr.branch-rent,
+  body.deal-buy hr.branch-buy { display: block; }
+
+  span[data-lang].branch-rent-inline,
+  span[data-lang].branch-buy-inline { display: none; }
+  body.deal-rent span[data-lang].active-lang.branch-rent-inline { display: inline; }
+  body.deal-buy span[data-lang].active-lang.branch-buy-inline { display: inline; }
 </style>
 </head>
 <body>
@@ -360,7 +402,7 @@
 
   <div class="header">
     <div class="eyebrow">
-      <span data-lang="ru" class="active-lang">Заявка · Албанія · 2026</span>
+      <span data-lang="ru" class="active-lang">Заявка · Албания · 2026</span>
       <span data-lang="ua">Заявка · Албанія · 2026</span>
       <span data-lang="en">Application · Albania · 2026</span>
     </div>
@@ -385,9 +427,47 @@
   <div class="card">
     <form id="intakeForm" class="form-content">
 
-      <!-- SECTION 1: CONTACT -->
+      <!-- SECTION 0: DEAL TYPE -->
       <div class="section">
         <div class="section-num">01</div>
+        <div class="section-title">
+          <span data-lang="ru" class="active-lang">Что вас интересует?</span>
+          <span data-lang="ua">Що вас цікавить?</span>
+              <span data-lang="en">What are you interested in?</span>
+        </div>
+        <div class="section-hint">
+          <span data-lang="ru" class="active-lang">От этого зависят следующие вопросы</span>
+          <span data-lang="ua">Від цього залежать наступні питання</span>
+              <span data-lang="en">This determines the next questions</span>
+        </div>
+
+        <div class="field">
+          <div class="chip-group">
+            <div class="chip">
+              <input type="radio" name="dealType" id="deal1" value="Аренда" required>
+              <label class="chip-label" for="deal1">
+                <span data-lang="ru" class="active-lang">Аренда</span>
+                <span data-lang="ua">Оренда</span>
+              <span data-lang="en">Rent</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="dealType" id="deal2" value="Покупка" required>
+              <label class="chip-label" for="deal2">
+                <span data-lang="ru" class="active-lang">Покупка</span>
+                <span data-lang="ua">Купівля</span>
+              <span data-lang="en">Buy</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- SECTION 1: CONTACT -->
+      <div class="section">
+        <div class="section-num">02</div>
         <div class="section-title">
           <span data-lang="ru" class="active-lang">Контакты</span>
           <span data-lang="ua">Контакти</span>
@@ -451,50 +531,53 @@
           </label>
           <div class="phone-row">
             <select name="phoneCountry" id="phoneCountry">
-              <option value="AL" data-code="+355" data-mask="999 999 999">🇦🇱 Albania +355</option>
-              <option value="UA" data-code="+380" data-mask="99 999 9999" selected>🇺🇦 Ukraine +380</option>
-              <option value="RU" data-code="+7" data-mask="999 999-99-99">🇷🇺 Russia +7</option>
-              <option value="BY" data-code="+375" data-mask="99 999-99-99">🇧🇾 Belarus +375</option>
-              <option value="MD" data-code="+373" data-mask="9999 9999">🇲🇩 Moldova +373</option>
-              <option value="KZ" data-code="+7" data-mask="999 999-99-99">🇰🇿 Kazakhstan +7</option>
-              <option value="GE" data-code="+995" data-mask="999 999 999">🇬🇪 Georgia +995</option>
-              <option value="AM" data-code="+374" data-mask="99 999999">🇦🇲 Armenia +374</option>
-              <option value="AZ" data-code="+994" data-mask="99 999 99 99">🇦🇿 Azerbaijan +994</option>
-              <option value="UZ" data-code="+998" data-mask="99 999 99 99">🇺🇿 Uzbekistan +998</option>
-              <option value="PL" data-code="+48" data-mask="999 999 999">🇵🇱 Poland +48</option>
-              <option value="DE" data-code="+49" data-mask="9999 9999999">🇩🇪 Germany +49</option>
-              <option value="IT" data-code="+39" data-mask="999 999 9999">🇮🇹 Italy +39</option>
-              <option value="ES" data-code="+34" data-mask="999 999 999">🇪🇸 Spain +34</option>
-              <option value="PT" data-code="+351" data-mask="999 999 999">🇵🇹 Portugal +351</option>
-              <option value="GR" data-code="+30" data-mask="999 999 9999">🇬🇷 Greece +30</option>
-              <option value="GB" data-code="+44" data-mask="9999 999999">🇬🇧 United Kingdom +44</option>
-              <option value="IE" data-code="+353" data-mask="99 999 9999">🇮🇪 Ireland +353</option>
-              <option value="FR" data-code="+33" data-mask="9 99 99 99 99">🇫🇷 France +33</option>
-              <option value="CZ" data-code="+420" data-mask="999 999 999">🇨🇿 Czechia +420</option>
-              <option value="SK" data-code="+421" data-mask="999 999 999">🇸🇰 Slovakia +421</option>
-              <option value="AT" data-code="+43" data-mask="999 9999999">🇦🇹 Austria +43</option>
-              <option value="CH" data-code="+41" data-mask="99 999 99 99">🇨🇭 Switzerland +41</option>
-              <option value="NL" data-code="+31" data-mask="9 99999999">🇳🇱 Netherlands +31</option>
-              <option value="BE" data-code="+32" data-mask="999 99 99 99">🇧🇪 Belgium +32</option>
-              <option value="SE" data-code="+46" data-mask="99 999 99 99">🇸🇪 Sweden +46</option>
-              <option value="NO" data-code="+47" data-mask="999 99 999">🇳🇴 Norway +47</option>
-              <option value="FI" data-code="+358" data-mask="99 999 9999">🇫🇮 Finland +358</option>
-              <option value="DK" data-code="+45" data-mask="99 99 99 99">🇩🇰 Denmark +45</option>
-              <option value="RO" data-code="+40" data-mask="999 999 999">🇷🇴 Romania +40</option>
-              <option value="BG" data-code="+359" data-mask="999 999 999">🇧🇬 Bulgaria +359</option>
-              <option value="HU" data-code="+36" data-mask="99 999 9999">🇭🇺 Hungary +36</option>
-              <option value="HR" data-code="+385" data-mask="99 999 9999">🇭🇷 Croatia +385</option>
-              <option value="ME" data-code="+382" data-mask="99 999 999">🇲🇪 Montenegro +382</option>
-              <option value="RS" data-code="+381" data-mask="99 999 9999">🇷🇸 Serbia +381</option>
-              <option value="MK" data-code="+389" data-mask="99 999 999">🇲🇰 N. Macedonia +389</option>
-              <option value="TR" data-code="+90" data-mask="999 999 99 99">🇹🇷 Turkey +90</option>
-              <option value="CY" data-code="+357" data-mask="99 999999">🇨🇾 Cyprus +357</option>
-              <option value="IL" data-code="+972" data-mask="9 999 9999">🇮🇱 Israel +972</option>
-              <option value="AE" data-code="+971" data-mask="99 999 9999">🇦🇪 UAE +971</option>
-              <option value="US" data-code="+1" data-mask="(999) 999-9999">🇺🇸 USA/Canada +1</option>
+              <option value="AL" data-code="+355" data-mask="999 999 999" data-example="069 123 4567">🇦🇱 Albania +355</option>
+              <option value="UA" data-code="+380" data-mask="99 999 9999" selected data-example="50 123 4567">🇺🇦 Ukraine +380</option>
+              <option value="RU" data-code="+7" data-mask="999 999-99-99" data-example="912 345-67-89">🇷🇺 Russia +7</option>
+              <option value="BY" data-code="+375" data-mask="99 999-99-99" data-example="29 123-45-67">🇧🇾 Belarus +375</option>
+              <option value="MD" data-code="+373" data-mask="9999 9999" data-example="6912 3456">🇲🇩 Moldova +373</option>
+              <option value="KZ" data-code="+7" data-mask="999 999-99-99" data-example="701 234-56-78">🇰🇿 Kazakhstan +7</option>
+              <option value="GE" data-code="+995" data-mask="999 999 999" data-example="555 123 456">🇬🇪 Georgia +995</option>
+              <option value="AM" data-code="+374" data-mask="99 999999" data-example="77 123456">🇦🇲 Armenia +374</option>
+              <option value="AZ" data-code="+994" data-mask="99 999 99 99" data-example="50 123 45 67">🇦🇿 Azerbaijan +994</option>
+              <option value="UZ" data-code="+998" data-mask="99 999 99 99" data-example="90 123 45 67">🇺🇿 Uzbekistan +998</option>
+              <option value="PL" data-code="+48" data-mask="999 999 999" data-example="512 345 678">🇵🇱 Poland +48</option>
+              <option value="DE" data-code="+49" data-mask="9999 9999999" data-example="1512 3456789">🇩🇪 Germany +49</option>
+              <option value="IT" data-code="+39" data-mask="999 999 9999" data-example="312 345 6789">🇮🇹 Italy +39</option>
+              <option value="ES" data-code="+34" data-mask="999 999 999" data-example="612 345 678">🇪🇸 Spain +34</option>
+              <option value="PT" data-code="+351" data-mask="999 999 999" data-example="912 345 678">🇵🇹 Portugal +351</option>
+              <option value="GR" data-code="+30" data-mask="999 999 9999" data-example="693 123 4567">🇬🇷 Greece +30</option>
+              <option value="GB" data-code="+44" data-mask="9999 999999" data-example="7400 123456">🇬🇧 United Kingdom +44</option>
+              <option value="IE" data-code="+353" data-mask="99 999 9999" data-example="85 123 4567">🇮🇪 Ireland +353</option>
+              <option value="FR" data-code="+33" data-mask="9 99 99 99 99" data-example="6 12 34 56 78">🇫🇷 France +33</option>
+              <option value="CZ" data-code="+420" data-mask="999 999 999" data-example="601 123 456">🇨🇿 Czechia +420</option>
+              <option value="SK" data-code="+421" data-mask="999 999 999" data-example="912 123 456">🇸🇰 Slovakia +421</option>
+              <option value="AT" data-code="+43" data-mask="999 9999999" data-example="664 1234567">🇦🇹 Austria +43</option>
+              <option value="CH" data-code="+41" data-mask="99 999 99 99" data-example="78 123 45 67">🇨🇭 Switzerland +41</option>
+              <option value="NL" data-code="+31" data-mask="9 99999999" data-example="6 12345678">🇳🇱 Netherlands +31</option>
+              <option value="BE" data-code="+32" data-mask="999 99 99 99" data-example="470 12 34 56">🇧🇪 Belgium +32</option>
+              <option value="SE" data-code="+46" data-mask="99 999 99 99" data-example="70 123 45 67">🇸🇪 Sweden +46</option>
+              <option value="NO" data-code="+47" data-mask="999 99 999" data-example="412 34 567">🇳🇴 Norway +47</option>
+              <option value="FI" data-code="+358" data-mask="99 999 9999" data-example="41 234 5678">🇫🇮 Finland +358</option>
+              <option value="DK" data-code="+45" data-mask="99 99 99 99" data-example="20 12 34 56">🇩🇰 Denmark +45</option>
+              <option value="RO" data-code="+40" data-mask="999 999 999" data-example="712 345 678">🇷🇴 Romania +40</option>
+              <option value="BG" data-code="+359" data-mask="999 999 999" data-example="888 123 456">🇧🇬 Bulgaria +359</option>
+              <option value="HU" data-code="+36" data-mask="99 999 9999" data-example="20 123 4567">🇭🇺 Hungary +36</option>
+              <option value="HR" data-code="+385" data-mask="99 999 9999" data-example="91 234 5678">🇭🇷 Croatia +385</option>
+              <option value="ME" data-code="+382" data-mask="99 999 999" data-example="67 123 456">🇲🇪 Montenegro +382</option>
+              <option value="RS" data-code="+381" data-mask="99 999 9999" data-example="60 123 4567">🇷🇸 Serbia +381</option>
+              <option value="MK" data-code="+389" data-mask="99 999 999" data-example="70 123 456">🇲🇰 N. Macedonia +389</option>
+              <option value="TR" data-code="+90" data-mask="999 999 99 99" data-example="532 123 45 67">🇹🇷 Turkey +90</option>
+              <option value="CY" data-code="+357" data-mask="99 999999" data-example="96 123456">🇨🇾 Cyprus +357</option>
+              <option value="IL" data-code="+972" data-mask="9 999 9999" data-example="5 234 5678">🇮🇱 Israel +972</option>
+              <option value="AE" data-code="+971" data-mask="99 999 9999" data-example="50 123 4567">🇦🇪 UAE +971</option>
+              <option value="US" data-code="+1" data-mask="(999) 999-9999" data-example="(202) 555-0182">🇺🇸 USA/Canada +1</option>
               <option value="OTHER" data-code="" data-mask="">🌍 Other / Інша / Другая</option>
             </select>
-            <input type="tel" name="phone" id="phoneNumber" required placeholder="00 000 0000">
+            <div class="phone-input-wrap">
+              <span class="phone-code-prefix" id="phoneCodePrefix">+380</span>
+              <input type="tel" name="phone" id="phoneNumber" required placeholder="50 123 4567">
+            </div>
           </div>
         </div>
 
@@ -510,9 +593,9 @@
 
       <hr class="divider">
 
-      <!-- SECTION 2: GOAL -->
-      <div class="section">
-        <div class="section-num">02</div>
+      <!-- SECTION 3a: GOAL (BUY ONLY) -->
+      <div class="section branch-buy">
+        <div class="section-num">03</div>
         <div class="section-title">
           <span data-lang="ru" class="active-lang">Цель покупки</span>
           <span data-lang="ua">Мета покупки</span>
@@ -527,7 +610,7 @@
         <div class="field">
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="goal" id="goal1" value="Инвестиция / сдача в аренду" required>
+              <input type="radio" name="goal" id="goal1" value="Инвестиция / сдача в аренду" data-branch="buy">
               <label class="chip-label" for="goal1">
                 <span data-lang="ru" class="active-lang">Инвестиция / сдача в аренду</span>
                 <span data-lang="ua">Інвестиція / здача в оренду</span>
@@ -535,7 +618,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="goal" id="goal2" value="Перепродажа в будущем" required>
+              <input type="radio" name="goal" id="goal2" value="Перепродажа в будущем" data-branch="buy">
               <label class="chip-label" for="goal2">
                 <span data-lang="ru" class="active-lang">Перепродажа в будущем</span>
                 <span data-lang="ua">Перепродаж у майбутньому</span>
@@ -543,7 +626,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="goal" id="goal3" value="Для жизни / переезда" required>
+              <input type="radio" name="goal" id="goal3" value="Для жизни / переезда" data-branch="buy">
               <label class="chip-label" for="goal3">
                 <span data-lang="ru" class="active-lang">Для жизни / переезда</span>
                 <span data-lang="ua">Для життя / переїзду</span>
@@ -551,19 +634,11 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="goal" id="goal4" value="ВНЖ через покупку" required>
+              <input type="radio" name="goal" id="goal4" value="ВНЖ через покупку" data-branch="buy">
               <label class="chip-label" for="goal4">
                 <span data-lang="ru" class="active-lang">ВНЖ через покупку</span>
                 <span data-lang="ua">ВНП через покупку</span>
               <span data-lang="en">Residency via purchase</span>
-              </label>
-            </div>
-            <div class="chip">
-              <input type="radio" name="goal" id="goal5" value="Пока изучаю варианты" required>
-              <label class="chip-label" for="goal5">
-                <span data-lang="ru" class="active-lang">Пока изучаю варианты</span>
-                <span data-lang="ua">Поки вивчаю варіанти</span>
-              <span data-lang="en">Just exploring options</span>
               </label>
             </div>
           </div>
@@ -571,44 +646,109 @@
 
         <div class="field">
           <label>
-            <span data-lang="ru" class="active-lang">Если для аренды — какой формат интересен?</span>
-            <span data-lang="ua">Якщо для оренди — який формат цікавий?</span>
-              <span data-lang="en">If for rental — what format interests you?</span>
+            <span data-lang="ru" class="active-lang">Вторичка или новостройка?</span>
+            <span data-lang="ua">Вторинка чи новобудова?</span>
+              <span data-lang="en">Resale or new build?</span>
           </label>
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="rentalType" id="rt1" value="Долгосрочная аренда">
-              <label class="chip-label" for="rt1">
-                <span data-lang="ru" class="active-lang">Долгосрочная</span>
-                <span data-lang="ua">Довгострокова</span>
-              <span data-lang="en">Long-term</span>
+              <input type="radio" name="propertyCondition" id="pc1" value="Вторичка" data-branch="buy">
+              <label class="chip-label" for="pc1">
+                <span data-lang="ru" class="active-lang">Вторичка</span>
+                <span data-lang="ua">Вторинка</span>
+              <span data-lang="en">Resale</span>
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="rentalType" id="rt2" value="Посуточная / летняя">
-              <label class="chip-label" for="rt2">
-                <span data-lang="ru" class="active-lang">Посуточная / летняя</span>
-                <span data-lang="ua">Подобова / літня</span>
-              <span data-lang="en">Short-term / seasonal</span>
-              </label>
-            </div>
-            <div class="chip">
-              <input type="radio" name="rentalType" id="rt3" value="Не актуально" checked>
-              <label class="chip-label" for="rt3">
-                <span data-lang="ru" class="active-lang">Не актуально</span>
-                <span data-lang="ua">Не актуально</span>
-              <span data-lang="en">Not relevant</span>
+              <input type="radio" name="propertyCondition" id="pc2" value="Новостройка" data-branch="buy">
+              <label class="chip-label" for="pc2">
+                <span data-lang="ru" class="active-lang">Новостройка</span>
+                <span data-lang="ua">Новобудова</span>
+              <span data-lang="en">New build</span>
               </label>
             </div>
           </div>
         </div>
       </div>
 
-      <hr class="divider">
+      <hr class="divider branch-buy">
+
+      <!-- SECTION 3b: RENTAL FORMAT (RENT ONLY) -->
+      <div class="section branch-rent">
+        <div class="section-num">03</div>
+        <div class="section-title">
+          <span data-lang="ru" class="active-lang">Формат аренды</span>
+          <span data-lang="ua">Формат оренди</span>
+              <span data-lang="en">Rental format</span>
+        </div>
+        <div class="section-hint">
+          <span data-lang="ru" class="active-lang">Это поможет подобрать подходящие варианты по срокам аренды</span>
+          <span data-lang="ua">Це допоможе підібрати відповідні варіанти за термінами оренди</span>
+              <span data-lang="en">This helps us match options to your rental term</span>
+        </div>
+
+        <div class="field">
+          <div class="chip-group">
+            <div class="chip">
+              <input type="radio" name="rentalType" id="rt1" value="Долгосрочная (от года)" data-branch="rent">
+              <label class="chip-label" for="rt1">
+                <span data-lang="ru" class="active-lang">Долгосрочная (от года)</span>
+                <span data-lang="ua">Довгострокова (від року)</span>
+              <span data-lang="en">Long-term (1 year+)</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="rentalType" id="rt2" value="На полгода" data-branch="rent">
+              <label class="chip-label" for="rt2">
+                <span data-lang="ru" class="active-lang">На полгода</span>
+                <span data-lang="ua">На пів року</span>
+              <span data-lang="en">For 6 months</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="rentalType" id="rt3" value="Помесячно" data-branch="rent">
+              <label class="chip-label" for="rt3">
+                <span data-lang="ru" class="active-lang">Помесячно</span>
+                <span data-lang="ua">Щомісячно</span>
+              <span data-lang="en">Month-to-month</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="rentalType" id="rt4" value="Посуточно" data-branch="rent">
+              <label class="chip-label" for="rt4">
+                <span data-lang="ru" class="active-lang">Посуточно</span>
+                <span data-lang="ua">Подобово</span>
+              <span data-lang="en">Daily / short-term</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="rentalType" id="rt5" value="Свой вариант" data-branch="rent">
+              <label class="chip-label" for="rt5">
+                <span data-lang="ru" class="active-lang">Свой вариант</span>
+                <span data-lang="ua">Свій варіант</span>
+              <span data-lang="en">Other</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" id="rentalTypeOtherField" style="display:none;">
+          <label>
+            <span data-lang="ru" class="active-lang">Уточните формат аренды</span>
+            <span data-lang="ua">Уточніть формат оренди</span>
+              <span data-lang="en">Please specify the rental format</span>
+          </label>
+          <input type="text" name="rentalTypeOther" id="rentalTypeOtherInput" placeholder="">
+        </div>
+      </div>
+
+      <hr class="branch-rent divider">
+
+      <hr class="divider branch-buy">
 
       <!-- SECTION 3: PROPERTY -->
       <div class="section">
-        <div class="section-num">03</div>
+        <div class="section-num">04</div>
         <div class="section-title">
           <span data-lang="ru" class="active-lang">Желаемый объект</span>
           <span data-lang="ua">Бажаний об'єкт</span>
@@ -622,26 +762,38 @@
               <span data-lang="ua">Тип нерухомості</span>
               <span data-lang="en">Property type</span>
             </label>
-            <select name="propertyType" required>
-              <option value="" disabled selected>—</option>
-              <option value="Студия">Студія / Студия</option>
-              <option value="1+1">1+1</option>
-              <option value="2+1">2+1</option>
-              <option value="3+1">3+1</option>
-              <option value="Дом/вилла">Будинок / Вілла</option>
-              <option value="Коммерция">Комерція</option>
-              <option value="Не определился">Не визначився(лась)</option>
+            <select name="propertyType" id="propertyTypeSelect" required>
+              <option value="" disabled selected data-i18n-ru="—" data-i18n-ua="—" data-i18n-en="—">—</option>
+              <option value="Студия" data-i18n-ru="Студия" data-i18n-ua="Студія" data-i18n-en="Studio">Студия</option>
+              <option value="1+1" data-i18n-ru="1+1" data-i18n-ua="1+1" data-i18n-en="1+1">1+1</option>
+              <option value="2+1" data-i18n-ru="2+1" data-i18n-ua="2+1" data-i18n-en="2+1">2+1</option>
+              <option value="3+1" data-i18n-ru="3+1" data-i18n-ua="3+1" data-i18n-en="3+1">3+1</option>
+              <option value="Дом/вилла" data-i18n-ru="Дом / Вилла" data-i18n-ua="Будинок / Вілла" data-i18n-en="House / Villa">Дом / Вилла</option>
+              <option value="Коммерция" class="branch-buy-option" data-i18n-ru="Коммерция" data-i18n-ua="Комерція" data-i18n-en="Commercial">Коммерция</option>
+              <option value="Свой вариант" data-i18n-ru="Свой вариант" data-i18n-ua="Свій варіант" data-i18n-en="Other">Свой вариант</option>
             </select>
           </div>
 
           <div class="field">
             <label>
-              <span data-lang="ru" class="active-lang">Бюджет, €</span>
-              <span data-lang="ua">Бюджет, €</span>
-              <span data-lang="en">Budget, €</span>
+              <span data-lang="ru" class="active-lang branch-buy-inline">Бюджет, €</span>
+              <span data-lang="ua" class="branch-buy-inline">Бюджет, €</span>
+              <span data-lang="en" class="branch-buy-inline">Budget, €</span>
+              <span data-lang="ru" class="active-lang branch-rent-inline">Бюджет, €/мес</span>
+              <span data-lang="ua" class="branch-rent-inline">Бюджет, €/міс</span>
+              <span data-lang="en" class="branch-rent-inline">Budget, €/month</span>
             </label>
-            <input type="text" name="budget" placeholder="50 000 – 80 000" required>
+            <input type="text" name="budget" id="budgetInput" placeholder="50 000 – 80 000" required>
           </div>
+        </div>
+
+        <div class="field" id="propertyTypeOtherField" style="display:none;">
+          <label>
+            <span data-lang="ru" class="active-lang">Уточните тип недвижимости</span>
+            <span data-lang="ua">Уточніть тип нерухомості</span>
+              <span data-lang="en">Please specify the property type</span>
+          </label>
+          <input type="text" name="propertyTypeOther" id="propertyTypeOtherInput" placeholder="">
         </div>
 
         <div class="field">
@@ -651,17 +803,25 @@
               <span data-lang="en">Desired region / city</span>
           </label>
           <select name="location" required>
-            <option value="" disabled selected>—</option>
-            <option value="Дуррес">Дуррес</option>
-            <option value="Тирана">Тирана</option>
-            <option value="Голем">Голем</option>
-            <option value="Влёра">Влора / Влера</option>
-            <option value="Саранда">Саранда</option>
-            <option value="Другое">Інше / ще не вирішив(ла)</option>
+            <option value="" disabled selected data-i18n-ru="—" data-i18n-ua="—" data-i18n-en="—">—</option>
+            <option value="Дуррес" data-i18n-ru="Дуррес" data-i18n-ua="Дуррес" data-i18n-en="Durrës">Дуррес</option>
+            <option value="Тирана" data-i18n-ru="Тирана" data-i18n-ua="Тирана" data-i18n-en="Tirana">Тирана</option>
+            <option value="Голем" data-i18n-ru="Голем" data-i18n-ua="Голем" data-i18n-en="Golem">Голем</option>
+            <option value="Саранда" data-i18n-ru="Саранда" data-i18n-ua="Саранда" data-i18n-en="Sarandë">Саранда</option>
+            <option value="Ксамиль" data-i18n-ru="Ксамиль" data-i18n-ua="Ксамиль" data-i18n-en="Ksamil">Ксамиль</option>
+            <option value="Шенджин" data-i18n-ru="Шенджин" data-i18n-ua="Шенджин" data-i18n-en="Shëngjin">Шенджин</option>
+            <option value="Влёра" data-i18n-ru="Влёра" data-i18n-ua="Влера" data-i18n-en="Vlorë">Влёра</option>
+            <option value="Мали и Робит" data-i18n-ru="Мали и Робит" data-i18n-ua="Малі і Робіт" data-i18n-en="Mali i Robit">Мали и Робит</option>
+            <option value="Кавая" data-i18n-ru="Кавая" data-i18n-ua="Кавая" data-i18n-en="Kavajë">Кавая</option>
+            <option value="Черрет" data-i18n-ru="Черрет" data-i18n-ua="Черрет" data-i18n-en="Çerrik">Черрет</option>
+            <option value="Берат" data-i18n-ru="Берат" data-i18n-ua="Берат" data-i18n-en="Berat">Берат</option>
+            <option value="Корча" data-i18n-ru="Корча" data-i18n-ua="Корча" data-i18n-en="Korçë">Корча</option>
+            <option value="Другое" data-i18n-ru="Другое" data-i18n-ua="Інше" data-i18n-en="Other">Другое</option>
           </select>
         </div>
 
-        <div class="field">
+        <!-- PRIORITY: BUY -->
+        <div class="field branch-buy">
           <label>
             <span data-lang="ru" class="active-lang">Что важнее всего в объекте?</span>
             <span data-lang="ua">Що найважливіше в об'єкті?</span>
@@ -669,7 +829,7 @@
           </label>
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="priority" id="p1" value="Близко к морю">
+              <input type="radio" name="priority" id="p1" value="Близко к морю" data-branch="buy">
               <label class="chip-label" for="p1">
                 <span data-lang="ru" class="active-lang">Близко к морю</span>
                 <span data-lang="ua">Близько до моря</span>
@@ -677,7 +837,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="priority" id="p2" value="Цена / доходность">
+              <input type="radio" name="priority" id="p2" value="Цена / доходность" data-branch="buy">
               <label class="chip-label" for="p2">
                 <span data-lang="ru" class="active-lang">Цена / доходность</span>
                 <span data-lang="ua">Ціна / прибутковість</span>
@@ -685,7 +845,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="priority" id="p3" value="Новостройка / сдача в этом году">
+              <input type="radio" name="priority" id="p3" value="Новостройка / сдача в этом году" data-branch="buy">
               <label class="chip-label" for="p3">
                 <span data-lang="ru" class="active-lang">Сдача в этом году</span>
                 <span data-lang="ua">Здача цього року</span>
@@ -693,7 +853,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="priority" id="p4" value="Инфраструктура района">
+              <input type="radio" name="priority" id="p4" value="Инфраструктура района" data-branch="buy">
               <label class="chip-label" for="p4">
                 <span data-lang="ru" class="active-lang">Инфраструктура района</span>
                 <span data-lang="ua">Інфраструктура району</span>
@@ -703,7 +863,51 @@
           </div>
         </div>
 
-        <div class="field">
+        <!-- PRIORITY: RENT -->
+        <div class="field branch-rent">
+          <label>
+            <span data-lang="ru" class="active-lang">Что важно при выборе жилья?</span>
+            <span data-lang="ua">Що важливо при виборі житла?</span>
+              <span data-lang="en">What matters when choosing the property?</span>
+          </label>
+          <div class="chip-group">
+            <div class="chip">
+              <input type="radio" name="priority" id="pr1" value="Близко к морю" data-branch="rent">
+              <label class="chip-label" for="pr1">
+                <span data-lang="ru" class="active-lang">Близко к морю</span>
+                <span data-lang="ua">Близько до моря</span>
+              <span data-lang="en">Close to the sea</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="priority" id="pr2" value="Меблировка и техника включены" data-branch="rent">
+              <label class="chip-label" for="pr2">
+                <span data-lang="ru" class="active-lang">Мебель и техника включены</span>
+                <span data-lang="ua">Меблі та техніка включені</span>
+              <span data-lang="en">Furnished & equipped</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="priority" id="pr3" value="Парковка" data-branch="rent">
+              <label class="chip-label" for="pr3">
+                <span data-lang="ru" class="active-lang">Парковка</span>
+                <span data-lang="ua">Паркування</span>
+              <span data-lang="en">Parking</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="priority" id="pr4" value="Тихий район / инфраструктура" data-branch="rent">
+              <label class="chip-label" for="pr4">
+                <span data-lang="ru" class="active-lang">Тихий район / инфраструктура</span>
+                <span data-lang="ua">Тихий район / інфраструктура</span>
+              <span data-lang="en">Quiet area / infrastructure</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE: BUY -->
+        <div class="field branch-buy">
           <label>
             <span data-lang="ru" class="active-lang">Когда планируете покупку?</span>
             <span data-lang="ua">Коли плануєте покупку?</span>
@@ -711,7 +915,7 @@
           </label>
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="timeline" id="t1" value="В ближайший месяц" required>
+              <input type="radio" name="timeline" id="t1" value="В ближайший месяц" data-branch="buy">
               <label class="chip-label" for="t1">
                 <span data-lang="ru" class="active-lang">В ближайший месяц</span>
                 <span data-lang="ua">Найближчим часом</span>
@@ -719,32 +923,189 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="timeline" id="t2" value="1–3 месяца" required>
+              <input type="radio" name="timeline" id="t2" value="1–3 месяца" data-branch="buy">
               <label class="chip-label" for="t2">1–3 <span data-lang="ru" class="active-lang">мес.</span><span data-lang="ua">міс.</span>
               <span data-lang="en">mo.</span></label>
             </div>
             <div class="chip">
-              <input type="radio" name="timeline" id="t3" value="3–6 месяцев" required>
+              <input type="radio" name="timeline" id="t3" value="3–6 месяцев" data-branch="buy">
               <label class="chip-label" for="t3">3–6 <span data-lang="ru" class="active-lang">мес.</span><span data-lang="ua">міс.</span>
               <span data-lang="en">mo.</span></label>
             </div>
+          </div>
+        </div>
+
+        <!-- MOVE-IN DATE: RENT -->
+        <div class="field branch-rent">
+          <label>
+            <span data-lang="ru" class="active-lang">Когда планируете заехать?</span>
+            <span data-lang="ua">Коли плануєте заїхати?</span>
+              <span data-lang="en">When do you plan to move in?</span>
+          </label>
+          <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="timeline" id="t4" value="Просто смотрю" required>
-              <label class="chip-label" for="t4">
-                <span data-lang="ru" class="active-lang">Просто смотрю</span>
-                <span data-lang="ua">Просто дивлюсь</span>
-              <span data-lang="en">Just browsing</span>
+              <input type="radio" name="moveInDate" id="md1" value="В ближайшие 1–2 недели" data-branch="rent">
+              <label class="chip-label" for="md1">
+                <span data-lang="ru" class="active-lang">В ближайшие 1–2 недели</span>
+                <span data-lang="ua">Найближчі 1–2 тижні</span>
+              <span data-lang="en">Within 1–2 weeks</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="moveInDate" id="md2" value="В течение месяца" data-branch="rent">
+              <label class="chip-label" for="md2">
+                <span data-lang="ru" class="active-lang">В течение месяца</span>
+                <span data-lang="ua">Протягом місяця</span>
+              <span data-lang="en">Within a month</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="moveInDate" id="md3" value="Через 1–3 месяца" data-branch="rent">
+              <label class="chip-label" for="md3">
+                <span data-lang="ru" class="active-lang">Через 1–3 месяца</span>
+                <span data-lang="ua">Через 1–3 місяці</span>
+              <span data-lang="en">In 1–3 months</span>
+              </label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="moveInDate" id="md4" value="Свой вариант" data-branch="rent">
+              <label class="chip-label" for="md4">
+                <span data-lang="ru" class="active-lang">Свой вариант</span>
+                <span data-lang="ua">Свій варіант</span>
+              <span data-lang="en">Other</span>
               </label>
             </div>
           </div>
+        </div>
+
+        <div class="field branch-rent" id="moveInDateOtherField" style="display:none;">
+          <label>
+            <span data-lang="ru" class="active-lang">Уточните срок заезда</span>
+            <span data-lang="ua">Уточніть термін заїзду</span>
+              <span data-lang="en">Please specify the move-in timing</span>
+          </label>
+          <input type="text" name="moveInDateOther" id="moveInDateOtherInput" placeholder="">
+        </div>
+
+        <!-- FLOOR PREFERENCE: RENT -->
+        <div class="field branch-rent">
+          <label>
+            <span data-lang="ru" class="active-lang">Какой этаж предпочтителен?</span>
+            <span data-lang="ua">Який поверх бажаний?</span>
+              <span data-lang="en">Preferred floor?</span>
+          </label>
+          <div class="chip-group">
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl1" value="1" data-branch="rent">
+              <label class="chip-label" for="fl1">1</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl2" value="2" data-branch="rent">
+              <label class="chip-label" for="fl2">2</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl3" value="3" data-branch="rent">
+              <label class="chip-label" for="fl3">3</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl4" value="4" data-branch="rent">
+              <label class="chip-label" for="fl4">4</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl5" value="5" data-branch="rent">
+              <label class="chip-label" for="fl5">5</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl6" value="6" data-branch="rent">
+              <label class="chip-label" for="fl6">6</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl7" value="7" data-branch="rent">
+              <label class="chip-label" for="fl7">7</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl8" value="8" data-branch="rent">
+              <label class="chip-label" for="fl8">8</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl9" value="9" data-branch="rent">
+              <label class="chip-label" for="fl9">9</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="fl10" value="10+" data-branch="rent">
+              <label class="chip-label" for="fl10">10+</label>
+            </div>
+            <div class="chip">
+              <input type="radio" name="floorPreference" id="flAny" value="Не важно" data-branch="rent">
+              <label class="chip-label" for="flAny">
+                <span data-lang="ru" class="active-lang">Не важно</span>
+                <span data-lang="ua">Не важливо</span>
+              <span data-lang="en">No preference</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- WHO WILL LIVE: RENT -->
+        <div class="row branch-rent">
+          <div class="field">
+            <label>
+              <span data-lang="ru" class="active-lang">Сколько человек будет проживать?</span>
+              <span data-lang="ua">Скільки людей проживатиме?</span>
+                <span data-lang="en">How many people will live there?</span>
+            </label>
+            <select name="occupants" id="occupantsSelect" data-branch="rent">
+              <option value="" disabled selected data-i18n-ru="—" data-i18n-ua="—" data-i18n-en="—">—</option>
+              <option value="1 человек" data-i18n-ru="1" data-i18n-ua="1" data-i18n-en="1">1</option>
+              <option value="2 человека" data-i18n-ru="2" data-i18n-ua="2" data-i18n-en="2">2</option>
+              <option value="3+ человека" data-i18n-ru="3+" data-i18n-ua="3+" data-i18n-en="3+">3+</option>
+              <option value="Семья с детьми" data-i18n-ru="Семья с детьми" data-i18n-ua="Сім'я з дітьми" data-i18n-en="Family with kids">Семья с детьми</option>
+              <option value="Свой вариант" data-i18n-ru="Свой вариант" data-i18n-ua="Свій варіант" data-i18n-en="Other">Свой вариант</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>
+              <span data-lang="ru" class="active-lang">Есть ли животные?</span>
+              <span data-lang="ua">Чи є тварини?</span>
+                <span data-lang="en">Any pets?</span>
+            </label>
+            <div class="chip-group">
+              <div class="chip">
+                <input type="radio" name="pets" id="pet1" value="Да" data-branch="rent">
+                <label class="chip-label" for="pet1">
+                  <span data-lang="ru" class="active-lang">Да</span>
+                  <span data-lang="ua">Так</span>
+                <span data-lang="en">Yes</span>
+                </label>
+              </div>
+              <div class="chip">
+                <input type="radio" name="pets" id="pet2" value="Нет" data-branch="rent">
+                <label class="chip-label" for="pet2">
+                  <span data-lang="ru" class="active-lang">Нет</span>
+                  <span data-lang="ua">Ні</span>
+                <span data-lang="en">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field branch-rent" id="occupantsOtherField" style="display:none;">
+          <label>
+            <span data-lang="ru" class="active-lang">Уточните, кто будет проживать</span>
+            <span data-lang="ua">Уточніть, хто проживатиме</span>
+              <span data-lang="en">Please specify who will live there</span>
+          </label>
+          <input type="text" name="occupantsOther" id="occupantsOtherInput" placeholder="">
         </div>
       </div>
 
       <hr class="divider">
 
       <!-- SECTION 4: FINANCE -->
-      <div class="section">
-        <div class="section-num">04</div>
+      <div class="section branch-buy">
+        <div class="section-num">05</div>
         <div class="section-title">
           <span data-lang="ru" class="active-lang">Покупка и оплата</span>
           <span data-lang="ua">Покупка та оплата</span>
@@ -764,64 +1125,31 @@
           </label>
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="payment" id="pay1" value="Полная оплата сразу">
+              <input type="radio" name="payment" id="pay1" value="Полная оплата сразу" data-branch="buy">
               <label class="chip-label" for="pay1">
                 <span data-lang="ru" class="active-lang">Полная оплата сразу</span>
                 <span data-lang="ua">Повна оплата одразу</span>
               <span data-lang="en">Full payment upfront</span>
               </label>
             </div>
-            <div class="chip">
-              <input type="radio" name="payment" id="pay2" value="Рассрочка от застройщика">
+            <div class="chip" id="payInstallmentChip" style="display:none;">
+              <input type="radio" name="payment" id="pay2" value="Рассрочка от застройщика" data-branch="buy">
               <label class="chip-label" for="pay2">
                 <span data-lang="ru" class="active-lang">Рассрочка от застройщика</span>
                 <span data-lang="ua">Розстрочка від забудовника</span>
               <span data-lang="en">Installment plan from developer</span>
               </label>
             </div>
-            <div class="chip">
-              <input type="radio" name="payment" id="pay3" value="Ещё не решил(а)">
-              <label class="chip-label" for="pay3">
-                <span data-lang="ru" class="active-lang">Ещё не решил(а)</span>
-                <span data-lang="ua">Ще не вирішив(ла)</span>
-              <span data-lang="en">Not decided yet</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>
-            <span data-lang="ru" class="active-lang">Принимаете решение сами или с кем-то ещё?</span>
-            <span data-lang="ua">Приймаєте рішення самі чи з кимось ще?</span>
-              <span data-lang="en">Do you decide alone or with someone else?</span>
-          </label>
-          <div class="chip-group">
-            <div class="chip">
-              <input type="radio" name="decisionMaker" id="dm1" value="Решаю сам(а)">
-              <label class="chip-label" for="dm1">
-                <span data-lang="ru" class="active-lang">Решаю сам(а)</span>
-                <span data-lang="ua">Вирішую сам(а)</span>
-              <span data-lang="en">I decide alone</span>
-              </label>
-            </div>
-            <div class="chip">
-              <input type="radio" name="decisionMaker" id="dm2" value="Вместе с партнёром/семьёй">
-              <label class="chip-label" for="dm2">
-                <span data-lang="ru" class="active-lang">С партнёром / семьёй</span>
-                <span data-lang="ua">З партнером / сім'єю</span>
-              <span data-lang="en">With partner / family</span>
-              </label>
-            </div>
           </div>
         </div>
       </div>
 
-      <hr class="divider">
+      <hr class="divider branch-buy">
 
       <!-- SECTION 5: ADDITIONAL -->
       <div class="section">
-        <div class="section-num">05</div>
+        <div class="section-num branch-buy-inline-num">06</div>
+        <div class="section-num branch-rent-inline-num">05</div>
         <div class="section-title">
           <span data-lang="ru" class="active-lang">Дополнительно</span>
           <span data-lang="ua">Додатково</span>
@@ -834,14 +1162,23 @@
             <span data-lang="ua">Звідки ви про нас дізнались?</span>
               <span data-lang="en">How did you hear about us?</span>
           </label>
-          <select name="source" required>
-            <option value="" disabled selected>—</option>
-            <option value="TikTok">TikTok</option>
-            <option value="Instagram">Instagram</option>
-            <option value="Рекомендация">Рекомендація знайомих</option>
-            <option value="Сайт">Сайт / оголошення</option>
-            <option value="Другое">Інше</option>
+          <select name="source" id="sourceSelect" required>
+            <option value="" disabled selected data-i18n-ru="—" data-i18n-ua="—" data-i18n-en="—">—</option>
+            <option value="TikTok" data-i18n-ru="TikTok" data-i18n-ua="TikTok" data-i18n-en="TikTok">TikTok</option>
+            <option value="Instagram" data-i18n-ru="Instagram" data-i18n-ua="Instagram" data-i18n-en="Instagram">Instagram</option>
+            <option value="Рекомендация" data-i18n-ru="Рекомендация знакомых" data-i18n-ua="Рекомендація знайомих" data-i18n-en="Recommendation from friends">Рекомендация знакомых</option>
+            <option value="Сайт" data-i18n-ru="Сайт / объявление" data-i18n-ua="Сайт / оголошення" data-i18n-en="Website / listing">Сайт / объявление</option>
+            <option value="Другое" data-i18n-ru="Другое" data-i18n-ua="Інше" data-i18n-en="Other">Другое</option>
           </select>
+        </div>
+
+        <div class="field" id="sourceOtherField" style="display:none;">
+          <label>
+            <span data-lang="ru" class="active-lang">Уточните, откуда узнали</span>
+            <span data-lang="ua">Уточніть, звідки дізнались</span>
+              <span data-lang="en">Please specify the source</span>
+          </label>
+          <input type="text" name="sourceOther" id="sourceOtherInput" placeholder="">
         </div>
 
         <div class="field">
@@ -852,7 +1189,7 @@
           </label>
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="visited" id="v1" value="Да, уже был(а)">
+              <input type="radio" name="visited" id="v1" value="Да, уже был(а)" required>
               <label class="chip-label" for="v1">
                 <span data-lang="ru" class="active-lang">Да, уже был(а)</span>
                 <span data-lang="ua">Так, вже був(ла)</span>
@@ -860,7 +1197,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="visited" id="v2" value="Планирую приехать">
+              <input type="radio" name="visited" id="v2" value="Планирую приехать" required>
               <label class="chip-label" for="v2">
                 <span data-lang="ru" class="active-lang">Планирую приехать</span>
                 <span data-lang="ua">Планую приїхати</span>
@@ -868,7 +1205,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="visited" id="v3" value="Нет, выбираю удалённо">
+              <input type="radio" name="visited" id="v3" value="Нет, выбираю удалённо" required>
               <label class="chip-label" for="v3">
                 <span data-lang="ru" class="active-lang">Нет, выбираю удалённо</span>
                 <span data-lang="ua">Ні, обираю віддалено</span>
@@ -922,6 +1259,12 @@
 </div>
 
 <script>
+  function translateSelectOptions(lang) {
+    document.querySelectorAll('select option[data-i18n-' + lang + ']').forEach(opt => {
+      opt.textContent = opt.dataset['i18n' + lang.charAt(0).toUpperCase() + lang.slice(1)];
+    });
+  }
+
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const lang = btn.dataset.setlang;
@@ -930,8 +1273,12 @@
       document.querySelectorAll('[data-lang]').forEach(el => {
         el.classList.toggle('active-lang', el.dataset.lang === lang);
       });
+      translateSelectOptions(lang);
     });
   });
+
+  // Apply initial translation for the default language (RU)
+  translateSelectOptions('ru');
 
   // Prevent multiple submissions: if already submitted, show success immediately
   if (localStorage.getItem('lemexi_submitted') === 'true') {
@@ -943,6 +1290,12 @@
   const nameInput = document.querySelector('input[name="name"]');
   nameInput.addEventListener('input', function() {
     this.value = this.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁёІіЇїЄєҐґ\s'-]/g, '');
+  });
+
+  // Budget: only digits, spaces and dashes (for ranges like 300 – 500)
+  const budgetFilterInput = document.getElementById('budgetInput');
+  budgetFilterInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9\s\-–—]/g, '');
   });
 
   // Clear error highlight on any radio group when user makes a selection
@@ -1016,11 +1369,25 @@
     return result;
   }
 
+  const phoneCodePrefix = document.getElementById('phoneCodePrefix');
+
   function updatePlaceholder() {
     const opt = phoneCountrySelect.options[phoneCountrySelect.selectedIndex];
     const mask = opt.dataset.mask;
-    phoneNumberInput.placeholder = mask ? mask.replace(/9/g, '0') : '';
+    const code = opt.dataset.code;
+    const example = opt.dataset.example;
+
+    phoneNumberInput.placeholder = example || (mask ? mask.replace(/9/g, '0') : '');
     phoneNumberInput.dataset.mask = mask;
+
+    if (code) {
+      phoneCodePrefix.textContent = code;
+      phoneCodePrefix.style.display = 'block';
+      phoneNumberInput.style.paddingLeft = (code.length * 9 + 24) + 'px';
+    } else {
+      phoneCodePrefix.style.display = 'none';
+      phoneNumberInput.style.paddingLeft = '';
+    }
   }
 
   phoneCountrySelect.addEventListener('change', () => {
@@ -1038,6 +1405,163 @@
   });
 
   updatePlaceholder();
+
+  // ===== DEAL TYPE BRANCHING (Аренда / Покупка) =====
+  const dealRadios = document.querySelectorAll('input[name="dealType"]');
+  const goalRadios = document.querySelectorAll('input[name="goal"][data-branch="buy"]');
+  const propertyConditionRadios = document.querySelectorAll('input[name="propertyCondition"][data-branch="buy"]');
+  const rentalTypeRadios = document.querySelectorAll('input[name="rentalType"][data-branch="rent"]');
+  const paymentRadios = document.querySelectorAll('input[name="payment"][data-branch="buy"]');
+  const priorityBuyRadios = document.querySelectorAll('input[name="priority"][data-branch="buy"]');
+  const priorityRentRadios = document.querySelectorAll('input[name="priority"][data-branch="rent"]');
+  const timelineRadios = document.querySelectorAll('input[name="timeline"][data-branch="buy"]');
+  const moveInDateRadios = document.querySelectorAll('input[name="moveInDate"][data-branch="rent"]');
+  const floorPreferenceRadios = document.querySelectorAll('input[name="floorPreference"][data-branch="rent"]');
+  const occupantsSelect = document.querySelector('select[name="occupants"][data-branch="rent"]');
+  const petsRadios = document.querySelectorAll('input[name="pets"][data-branch="rent"]');
+  const commerceOptions = document.querySelectorAll('option.branch-buy-option');
+  const budgetInput = document.getElementById('budgetInput');
+
+  function setRequired(nodeList, isRequired) {
+    nodeList.forEach(el => { el.required = isRequired; });
+  }
+
+  function applyDealType(value) {
+    document.body.classList.remove('deal-rent', 'deal-buy');
+    if (value === 'Аренда') {
+      document.body.classList.add('deal-rent');
+      budgetInput.placeholder = '300 – 500';
+      setRequired(goalRadios, false);
+      setRequired(propertyConditionRadios, false);
+      setRequired(rentalTypeRadios, true);
+      setRequired(paymentRadios, false);
+      setRequired(priorityBuyRadios, false);
+      setRequired(priorityRentRadios, true);
+      setRequired(timelineRadios, false);
+      setRequired(moveInDateRadios, true);
+      setRequired(floorPreferenceRadios, true);
+      if (occupantsSelect) occupantsSelect.required = true;
+      setRequired(petsRadios, true);
+      commerceOptions.forEach(opt => { opt.disabled = true; if (opt.selected) opt.selected = false; });
+    } else if (value === 'Покупка') {
+      document.body.classList.add('deal-buy');
+      budgetInput.placeholder = '50 000 – 80 000';
+      setRequired(goalRadios, true);
+      setRequired(propertyConditionRadios, true);
+      setRequired(rentalTypeRadios, false);
+      setRequired(paymentRadios, true);
+      setRequired(priorityBuyRadios, true);
+      setRequired(priorityRentRadios, false);
+      setRequired(timelineRadios, true);
+      setRequired(moveInDateRadios, false);
+      setRequired(floorPreferenceRadios, false);
+      if (occupantsSelect) occupantsSelect.required = false;
+      setRequired(petsRadios, false);
+      commerceOptions.forEach(opt => { opt.disabled = false; });
+      updateInstallmentVisibility();
+    }
+  }
+
+  dealRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      applyDealType(this.value);
+    });
+  });
+
+  // ===== "Свой вариант" rental type -> show text field =====
+  const rentalTypeOtherField = document.getElementById('rentalTypeOtherField');
+  const rentalTypeOtherInput = document.getElementById('rentalTypeOtherInput');
+  document.querySelectorAll('input[name="rentalType"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.value === 'Свой вариант') {
+        rentalTypeOtherField.style.display = 'block';
+        rentalTypeOtherInput.required = true;
+      } else {
+        rentalTypeOtherField.style.display = 'none';
+        rentalTypeOtherInput.required = false;
+        rentalTypeOtherInput.value = '';
+      }
+    });
+  });
+
+  // ===== "Свой вариант" move-in date -> show text field =====
+  const moveInDateOtherField = document.getElementById('moveInDateOtherField');
+  const moveInDateOtherInput = document.getElementById('moveInDateOtherInput');
+  document.querySelectorAll('input[name="moveInDate"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.value === 'Свой вариант') {
+        moveInDateOtherField.style.display = 'block';
+        moveInDateOtherInput.required = true;
+      } else {
+        moveInDateOtherField.style.display = 'none';
+        moveInDateOtherInput.required = false;
+        moveInDateOtherInput.value = '';
+      }
+    });
+  });
+
+  // ===== "Свой вариант" property type -> show text field =====
+  const propertyTypeOtherField = document.getElementById('propertyTypeOtherField');
+  const propertyTypeOtherInput = document.getElementById('propertyTypeOtherInput');
+  document.getElementById('propertyTypeSelect').addEventListener('change', function() {
+    if (this.value === 'Свой вариант') {
+      propertyTypeOtherField.style.display = 'block';
+      propertyTypeOtherInput.required = true;
+    } else {
+      propertyTypeOtherField.style.display = 'none';
+      propertyTypeOtherInput.required = false;
+      propertyTypeOtherInput.value = '';
+    }
+  });
+
+  // ===== "Другое" source -> show text field =====
+  const sourceOtherField = document.getElementById('sourceOtherField');
+  const sourceOtherInput = document.getElementById('sourceOtherInput');
+  document.getElementById('sourceSelect').addEventListener('change', function() {
+    if (this.value === 'Другое') {
+      sourceOtherField.style.display = 'block';
+      sourceOtherInput.required = true;
+    } else {
+      sourceOtherField.style.display = 'none';
+      sourceOtherInput.required = false;
+      sourceOtherInput.value = '';
+    }
+  });
+
+  // ===== "Свой вариант" occupants -> show text field =====
+  const occupantsOtherField = document.getElementById('occupantsOtherField');
+  const occupantsOtherInput = document.getElementById('occupantsOtherInput');
+  const occupantsSelectEl = document.getElementById('occupantsSelect');
+  occupantsSelectEl.addEventListener('change', function() {
+    if (this.value === 'Свой вариант') {
+      occupantsOtherField.style.display = 'block';
+      occupantsOtherInput.required = true;
+    } else {
+      occupantsOtherField.style.display = 'none';
+      occupantsOtherInput.required = false;
+      occupantsOtherInput.value = '';
+    }
+  });
+
+  // ===== Show "Рассрочка от застройщика" only for Покупка + Новостройка =====
+  const payInstallmentChip = document.getElementById('payInstallmentChip');
+  const pay2Radio = document.getElementById('pay2');
+
+  function updateInstallmentVisibility() {
+    const condition = document.querySelector('input[name="propertyCondition"]:checked');
+    if (condition && condition.value === 'Новостройка') {
+      payInstallmentChip.style.display = 'block';
+    } else {
+      payInstallmentChip.style.display = 'none';
+      if (pay2Radio.checked) {
+        pay2Radio.checked = false;
+      }
+    }
+  }
+
+  document.querySelectorAll('input[name="propertyCondition"]').forEach(radio => {
+    radio.addEventListener('change', updateInstallmentVisibility);
+  });
 
 
 
@@ -1152,6 +1676,8 @@
     let message = '🆕 *Новая заявка LEMEXI*\n';
     message += '━━━━━━━━━━━━━━━━━━\n\n';
 
+    message += `📌 *Тип запроса: ${v('dealType')}*\n\n`;
+
     message += '👤 *Контакты*\n';
     message += `Имя: ${v('name')}\n`;
     message += `Город/страна: ${v('currentCity')}\n`;
@@ -1159,23 +1685,47 @@
     message += `Телефон: ${v('phone')}\n`;
     message += `Telegram: ${v('telegram')}\n\n`;
 
-    message += '🎯 *Цель и формат*\n';
-    message += `Цель покупки: ${v('goal')}\n`;
-    message += `Формат аренды: ${v('rentalType')}\n\n`;
+    if (entries.dealType === 'Покупка') {
+      message += '🎯 *Цель и формат*\n';
+      message += `Цель покупки: ${v('goal')}\n`;
+      message += `Вторичка/новостройка: ${v('propertyCondition')}\n\n`;
+    } else if (entries.dealType === 'Аренда') {
+      message += '🎯 *Формат аренды*\n';
+      const rentalType = entries.rentalType === 'Свой вариант'
+        ? `Свой вариант — ${v('rentalTypeOther')}`
+        : v('rentalType');
+      message += `Формат: ${rentalType}\n\n`;
+    }
 
     message += '🏠 *Объект*\n';
-    message += `Тип недвижимости: ${v('propertyType')}\n`;
-    message += `Бюджет: ${v('budget')}\n`;
+    message += `Тип недвижимости: ${entries.propertyType === 'Свой вариант' ? `Свой вариант — ${v('propertyTypeOther')}` : v('propertyType')}\n`;
+    if (entries.dealType === 'Аренда') {
+      message += `Бюджет: ${v('budget')} €/мес\n`;
+    } else {
+      message += `Бюджет: ${v('budget')} €\n`;
+    }
     message += `Локация: ${v('location')}\n`;
     message += `Приоритет: ${v('priority')}\n`;
-    message += `Сроки: ${v('timeline')}\n\n`;
 
-    message += '💳 *Оплата и решение*\n';
-    message += `Оплата: ${v('payment')}\n`;
-    message += `Кто решает: ${v('decisionMaker')}\n\n`;
+    if (entries.dealType === 'Покупка') {
+      message += `Сроки покупки: ${v('timeline')}\n\n`;
+    } else if (entries.dealType === 'Аренда') {
+      message += `Когда заехать: ${entries.moveInDate === 'Свой вариант' ? `Свой вариант — ${v('moveInDateOther')}` : v('moveInDate')}\n`;
+      message += `Этаж: ${v('floorPreference')}\n`;
+      const occupants = entries.occupants === 'Свой вариант'
+        ? `Свой вариант — ${v('occupantsOther')}`
+        : v('occupants');
+      message += `Кол-во проживающих: ${occupants}\n`;
+      message += `Животные: ${v('pets')}\n\n`;
+    }
+
+    if (entries.dealType === 'Покупка') {
+      message += '💳 *Оплата*\n';
+      message += `Оплата: ${v('payment')}\n\n`;
+    }
 
     message += '📋 *Дополнительно*\n';
-    message += `Источник: ${v('source')}\n`;
+    message += `Источник: ${entries.source === 'Другое' ? `Другое — ${v('sourceOther')}` : v('source')}\n`;
     message += `Был(а) в Албании: ${v('visited')}\n`;
     message += `Заметки: ${v('notes')}\n`;
 
