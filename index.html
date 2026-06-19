@@ -872,7 +872,7 @@
           </label>
           <div class="chip-group">
             <div class="chip">
-              <input type="radio" name="priority" id="pr1" value="Близко к морю" data-branch="rent">
+              <input type="checkbox" name="priorityRent" id="pr1" value="Близко к морю" data-branch="rent">
               <label class="chip-label" for="pr1">
                 <span data-lang="ru" class="active-lang">Близко к морю</span>
                 <span data-lang="ua">Близько до моря</span>
@@ -880,7 +880,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="priority" id="pr2" value="Меблировка и техника включены" data-branch="rent">
+              <input type="checkbox" name="priorityRent" id="pr2" value="Меблировка и техника включены" data-branch="rent">
               <label class="chip-label" for="pr2">
                 <span data-lang="ru" class="active-lang">Мебель и техника включены</span>
                 <span data-lang="ua">Меблі та техніка включені</span>
@@ -888,7 +888,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="priority" id="pr3" value="Парковка" data-branch="rent">
+              <input type="checkbox" name="priorityRent" id="pr3" value="Парковка" data-branch="rent">
               <label class="chip-label" for="pr3">
                 <span data-lang="ru" class="active-lang">Парковка</span>
                 <span data-lang="ua">Паркування</span>
@@ -896,7 +896,7 @@
               </label>
             </div>
             <div class="chip">
-              <input type="radio" name="priority" id="pr4" value="Тихий район / инфраструктура" data-branch="rent">
+              <input type="checkbox" name="priorityRent" id="pr4" value="Тихий район / инфраструктура" data-branch="rent">
               <label class="chip-label" for="pr4">
                 <span data-lang="ru" class="active-lang">Тихий район / инфраструктура</span>
                 <span data-lang="ua">Тихий район / інфраструктура</span>
@@ -1308,7 +1308,7 @@
     if (msg) msg.classList.remove('show');
   }
 
-  document.querySelectorAll('input[type="radio"]').forEach(radio => {
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(radio => {
     radio.addEventListener('change', function() {
       clearFieldError(this.closest('.field'));
     });
@@ -1413,7 +1413,7 @@
   const rentalTypeRadios = document.querySelectorAll('input[name="rentalType"][data-branch="rent"]');
   const paymentRadios = document.querySelectorAll('input[name="payment"][data-branch="buy"]');
   const priorityBuyRadios = document.querySelectorAll('input[name="priority"][data-branch="buy"]');
-  const priorityRentRadios = document.querySelectorAll('input[name="priority"][data-branch="rent"]');
+  const priorityRentRadios = document.querySelectorAll('input[name="priorityRent"][data-branch="rent"]');
   const timelineRadios = document.querySelectorAll('input[name="timeline"][data-branch="buy"]');
   const moveInDateRadios = document.querySelectorAll('input[name="moveInDate"][data-branch="rent"]');
   const floorPreferenceRadios = document.querySelectorAll('input[name="floorPreference"][data-branch="rent"]');
@@ -1597,7 +1597,7 @@
 
       const chipGroup = group.querySelector('.chip-group');
       if (chipGroup) {
-        const radios = chipGroup.querySelectorAll('input[type="radio"][required]');
+        const radios = chipGroup.querySelectorAll('input[type="radio"][required], input[type="checkbox"][required]');
         if (radios.length > 0) {
           const checked = Array.from(radios).some(r => r.checked);
           if (!checked) {
@@ -1705,7 +1705,10 @@
       message += `Бюджет: ${v('budget')} €\n`;
     }
     message += `Локация: ${v('location')}\n`;
-    message += `Приоритет: ${v('priority')}\n`;
+    const priorityValue = entries.dealType === 'Аренда'
+      ? (data.getAll('priorityRent').join(', ') || '—')
+      : v('priority');
+    message += `Приоритет: ${priorityValue}\n`;
 
     if (entries.dealType === 'Покупка') {
       message += `Сроки покупки: ${v('timeline')}\n\n`;
